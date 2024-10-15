@@ -23,11 +23,16 @@ jobs:
       - name: Install Homebrew
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+      - name: Create .dotfiles directory
+        run: mkdir -p /Users/runner/.dotfiles
+
       - name: Debug directory structure
         run: |
           pwd
-          ls -R ansible-mac-setup/roles/dotfiles/files/
-          ls -R /Users/runner/.dotfiles/
+          echo "Contents of ansible-mac-setup/roles/dotfiles/files/:"
+          ls -la ansible-mac-setup/roles/dotfiles/files/
+          echo "Contents of /Users/runner/.dotfiles/:"
+          ls -la /Users/runner/.dotfiles/
 
       - name: Run Ansible Playbook
         run: |

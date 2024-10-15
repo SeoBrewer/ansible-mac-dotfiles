@@ -13,7 +13,6 @@
   loop:
     - .vimrc
     - .tmux.conf
-    - .gitconfig
     - .zshrc
 
 - name: Create symlinks for dotfiles
@@ -89,22 +88,14 @@
     - code/personal
     - code/work
 
-- name: Configurar .gitconfig global
+- name: Template gitconfig files
   template:
-    src: gitconfig.j2
-    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     mode: '0644'
-
-- name: Configurar .gitconfig para proyectos personales
-  template:
-    src: gitconfig_personal.j2
-    dest: "{{ ansible_env.HOME }}/code/personal/.gitconfig"
-    mode: '0644'
-
-- name: Configurar .gitconfig para proyectos de trabajo
-  template:
-    src: gitconfig_work.j2
-    dest: "{{ ansible_env.HOME }}/code/work/.gitconfig"
-    mode: '0644'
+  loop:
+    - { src: 'gitconfig.j2', dest: '{{ ansible_env.HOME }}/.dotfiles/.gitconfig' }
+    - { src: 'gitconfig_personal.j2', dest: '{{ ansible_env.HOME }}/code/personal/.gitconfig' }
+    - { src: 'gitconfig_work.j2', dest: '{{ ansible_env.HOME }}/code/work/.gitconfig' }
 
 # Puedes agregar más tareas aquí para configuraciones adicionales
