@@ -31,7 +31,7 @@ jobs:
       - name: Run Ansible Playbook
         run: |
           cd ansible-mac-setup
-          ansible-playbook -i $PWD/inventory $PWD/playbook.yml --check
+          ansible-playbook -i $PWD/inventory $PWD/playbook.yml --check -vvv
 
       - name: Verify installed packages
         run: |
