@@ -1,0 +1,32 @@
+[user]
+    name = {{ user_name.user_input }}
+    email = {{ user_email_personal.user_input }}
+
+[core]
+    editor = vim
+    excludesfile = ~/.gitignore_global
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+    br = branch
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+
+[init]
+    defaultBranch = main
+
+[includeIf "gitdir:~/code/work/"]
+    path = ~/code/work/.gitconfig
+
+[includeIf "gitdir:~/code/personal/"]
+    path = ~/code/personal/.gitconfig

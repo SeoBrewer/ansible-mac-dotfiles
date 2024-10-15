@@ -1,21 +1,109 @@
 ---
-- name: Clone dotfiles repository
-  git:
-    repo: 'https://github.com/seobrewer/dotfiles.git'
-    dest: '~/dotfiles'
-    version: main
+- name: Ensure dotfiles directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.dotfiles"
+    state: directory
+    mode: '0755'
+
+- name: Copy dotfiles to home directory
+  copy:
+    src: "files/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.dotfiles/{{ item }}"
+    mode: '0644'
+  loop:
+    - .vimrc
+    - .tmux.conf
+    - .gitconfig
+    - .zshrc
 
 - name: Create symlinks for dotfiles
   file:
-    src: '~/dotfiles/{{ item }}'
-    dest: '~/{{ item }}'
+    src: "{{ ansible_env.HOME }}/.dotfiles/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/{{ item }}"
     state: link
   loop:
     - .vimrc
     - .tmux.conf
     - .gitconfig
+    - .zshrc
 
-- name: Create .zshrc from template
+- name: Install Oh My Zsh
+  shell: sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  args:
+    creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+
+- name: Install Vim-Plug
+  get_url:
+    url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    dest: "{{ ansible_env.HOME }}/.vim/autoload/plug.vim"
+    mode: '0644'
+    force: no
+
+- name: Install Vim plugins
+  command: vim +PlugInstall +qall
+  changed_when: false
+
+- name: Install Homebrew packages
+  homebrew:
+    name:
+      - git
+      - tmux
+      - nvm
+      - pyenv
+      - go
+    state: present
+
+- name: Install global npm packages
+  npm:
+    name:
+      - yarn
+      - typescript
+    global: yes
+  environment:
+    PATH: "{{ ansible_env.HOME }}/.nvm/versions/node/v{{ node_version }}/bin:{{ ansible_env.PATH }}"
+  vars:
+    node_version: "14.17.0"  # Ajusta esto a la versión de Node que prefieras
+
+- name: Solicitar nombre del usuario
+  pause:
+    prompt: "Por favor, introduce tu nombre completo"
+  register: user_name
+
+- name: Solicitar email personal del usuario
+  pause:
+    prompt: "Por favor, introduce tu email personal"
+  register: user_email_personal
+
+- name: Solicitar email de trabajo del usuario
+  pause:
+    prompt: "Por favor, introduce tu email de trabajo"
+  register: user_email_work
+
+- name: Crear directorios de código
+  file:
+    path: "{{ ansible_env.HOME }}/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - code/personal
+    - code/work
+
+- name: Configurar .gitconfig global
   template:
-    src: zshrc.j2
-    dest: "{{ ansible_env.HOME }}/.zshrc"
+    src: gitconfig.j2
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    mode: '0644'
+
+- name: Configurar .gitconfig para proyectos personales
+  template:
+    src: gitconfig_personal.j2
+    dest: "{{ ansible_env.HOME }}/code/personal/.gitconfig"
+    mode: '0644'
+
+- name: Configurar .gitconfig para proyectos de trabajo
+  template:
+    src: gitconfig_work.j2
+    dest: "{{ ansible_env.HOME }}/code/work/.gitconfig"
+    mode: '0644'
+
+# Puedes agregar más tareas aquí para configuraciones adicionales

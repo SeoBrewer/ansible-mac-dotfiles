@@ -1,0 +1,27 @@
+[user]
+    name = Tu Nombre
+    email = tu@email.com
+
+[core]
+    editor = vim
+    excludesfile = ~/.gitignore_global
+
+[color]
+    ui = auto
+
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+    br = branch
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+
+[init]
+    defaultBranch = main
+
