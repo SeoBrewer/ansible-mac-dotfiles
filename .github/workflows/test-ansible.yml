@@ -23,8 +23,15 @@ jobs:
       - name: Install Homebrew
         run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+      - name: Debug directory structure
+        run: |
+          pwd
+          ls -R
+
       - name: Run Ansible Playbook
-        run: ansible-playbook -i inventory playbook.yml --check
+        run: |
+          cd ansible-mac-setup
+          ansible-playbook -i $PWD/inventory $PWD/playbook.yml --check
 
       - name: Verify installed packages
         run: |
