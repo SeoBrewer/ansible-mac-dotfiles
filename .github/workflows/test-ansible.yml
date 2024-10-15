@@ -26,7 +26,8 @@ jobs:
       - name: Debug directory structure
         run: |
           pwd
-          ls -R
+          ls -R ansible-mac-setup/roles/dotfiles/files/
+          ls -R /Users/runner/.dotfiles/
 
       - name: Run Ansible Playbook
         run: |
