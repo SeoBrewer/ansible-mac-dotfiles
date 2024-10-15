@@ -32,6 +32,12 @@
   args:
     creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
 
+- name: Ensure .vim/autoload directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.vim/autoload"
+    state: directory
+    mode: '0755'
+
 - name: Install Vim-Plug
   get_url:
     url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -39,9 +45,16 @@
     mode: '0644'
     force: no
 
+- name: Check if Vim is installed
+  command: which vim
+  register: vim_check
+  ignore_errors: yes
+  changed_when: false
+
 - name: Install Vim plugins
   command: vim +PlugInstall +qall
   changed_when: false
+  when: vim_check.rc == 0
 
 - name: Install Homebrew packages
   homebrew:
@@ -68,16 +81,37 @@
   pause:
     prompt: "Por favor, introduce tu nombre completo"
   register: user_name
+  when: not ansible_check_mode
+
+- name: Set default name for check mode
+  set_fact:
+    user_name: 
+      user_input: "John Doe"
+  when: ansible_check_mode
 
 - name: Solicitar email personal del usuario
   pause:
     prompt: "Por favor, introduce tu email personal"
   register: user_email_personal
+  when: not ansible_check_mode
+
+- name: Set default personal email for check mode
+  set_fact:
+    user_email_personal: 
+      user_input: "john.doe@personal.com"
+  when: ansible_check_mode
 
 - name: Solicitar email de trabajo del usuario
   pause:
     prompt: "Por favor, introduce tu email de trabajo"
   register: user_email_work
+  when: not ansible_check_mode
+
+- name: Set default work email for check mode
+  set_fact:
+    user_email_work: 
+      user_input: "john.doe@work.com"
+  when: ansible_check_mode
 
 - name: Crear directorios de código
   file:
