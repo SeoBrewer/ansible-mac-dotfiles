@@ -26,6 +26,9 @@ jobs:
       - name: Create .dotfiles directory
         run: mkdir -p /Users/runner/.dotfiles
 
+      - name: Create .vim/autoload directory
+        run: mkdir -p /Users/runner/.vim/autoload
+
       - name: Debug directory structure
         run: |
           pwd
@@ -33,6 +36,8 @@ jobs:
           ls -la ansible-mac-setup/roles/dotfiles/files/
           echo "Contents of /Users/runner/.dotfiles/:"
           ls -la /Users/runner/.dotfiles/
+          echo "Contents of /Users/runner/.vim/autoload/:"
+          ls -la /Users/runner/.vim/autoload/
 
       - name: Run Ansible Playbook
         run: |
