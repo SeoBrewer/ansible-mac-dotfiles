@@ -1,0 +1,21 @@
+---
+- name: Clone dotfiles repository
+  git:
+    repo: 'https://github.com/your-username/dotfiles.git'
+    dest: '~/dotfiles'
+    version: main
+
+- name: Create symlinks for dotfiles
+  file:
+    src: '~/dotfiles/{{ item }}'
+    dest: '~/{{ item }}'
+    state: link
+  loop:
+    - .vimrc
+    - .tmux.conf
+    - .gitconfig
+
+- name: Create .zshrc from template
+  template:
+    src: zshrc.j2
+    dest: "{{ ansible_env.HOME }}/.zshrc"

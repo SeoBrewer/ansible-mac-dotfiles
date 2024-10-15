@@ -1,0 +1,29 @@
+---
+- name: Install development tools
+  homebrew:
+    name:
+      - visual-studio-code
+      - cursor
+      - pnpm
+      - nvm
+      - yazi
+    state: present
+
+- name: Install Node.js using NVM
+  shell: |
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    nvm install node
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/versions/node"
+  when: "'nvm' in ansible_facts.packages"
+
+- name: Ensure Yazi config directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.config/yazi"
+    state: directory
+
+- name: Create Yazi config file
+  template:
+    src: yazi.toml.j2
+    dest: "{{ ansible_env.HOME }}/.config/yazi/yazi.toml"
