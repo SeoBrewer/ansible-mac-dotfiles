@@ -42,4 +42,4 @@ jobs:
       - name: Verify installed packages
         run: |
           brew list
-          brew cask list
+          brew list --cask
